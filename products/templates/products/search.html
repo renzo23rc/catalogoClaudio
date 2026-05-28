@@ -1,4 +1,7 @@
 {% extends 'products/base.html' %}
+{% load product_tags %}
+
+{% block title %}Resultados para "{{ query }}" | Catalogo{% endblock %}
 
 {% block content %}
 <h1>Resultados para "{{ query }}"</h1>
@@ -7,18 +10,30 @@
 <div class="grid">
     {% for product in products %}
     <div class="card">
+        {% if product.images.all %}
+        <img src="{{ product.images.all.0.image.url }}" alt="{{ product.images.all.0.alt_text|default:product.name }}" class="card__image" loading="lazy">
+        {% endif %}
         <div class="card__body">
             <a href="{% url 'products:product_detail' product.slug %}">
                 <h3 class="card__title">{{ product.name }}</h3>
-                <p class="card__price">${{ product.base_price }}</p>
             </a>
+            {% with offer=product|active_offer %}
+            {% if offer %}
+            <p class="card__price">
+                <span class="price--original">${{ product.base_price }}</span>
+                <span class="price--discounted">${{ product|discounted_price }}</span>
+            </p>
+            <span class="offer-badge">
+                {% if offer.discount_type == 'percentage' %}-{{ offer.discount_value|floatformat:0 }}%{% else %}-${{ offer.discount_value }}{% endif %}
+            </span>
+            {% else %}
+            <p class="card__price">${{ product.base_price }}</p>
+            {% endif %}
+            {% endwith %}
         </div>
     </div>
     {% endfor %}
 </div>
-{% else %}
-<p>No se encontraron productos.</p>
-{% endif %}
 
 {% if is_paginated %}
 <div class="pagination">
@@ -30,5 +45,8 @@
     <a href="?q={{ query|urlencode }}&page={{ page_obj.next_page_number }}">Siguiente</a>
     {% endif %}
 </div>
+{% endif %}
+{% else %}
+<p class="empty">No se encontraron productos para "{{ query }}". Intenta con otra busqueda.</p>
 {% endif %}
 {% endblock %}

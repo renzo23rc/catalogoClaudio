@@ -6,17 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Catalogo{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <div class="container">
-        <nav class="nav">
+    <header class="nav">
+        <div class="container nav__inner">
             <a href="{% url 'products:home' %}" class="nav__brand">Catalogo</a>
             <form class="nav__search" action="{% url 'products:search' %}" method="get">
-                <input type="text" name="q" placeholder="Buscar productos..." value="{{ query|default:'' }}">
+                <input type="text" name="q" placeholder="Buscar productos..." value="{{ query|default:'' }}" aria-label="Buscar productos">
                 <button type="submit">Buscar</button>
             </form>
-        </nav>
+        </div>
+    </header>
+
+    <main class="container">
         {% block content %}{% endblock %}
-    </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {% now "Y" %} Catalogo. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>

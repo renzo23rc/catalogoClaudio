@@ -1,17 +1,47 @@
 {% extends 'products/base.html' %}
+{% load product_tags %}
+
+{% block title %}{{ category.name }} | Catalogo{% endblock %}
 
 {% block content %}
 <h1>{{ category.name }}</h1>
-<p>{{ category.description }}</p>
+{% if category.description %}<p class="category__description">{{ category.description }}</p>{% endif %}
 
+<div class="filter-bar">
+    <a href="?{% if on_offer %}on_offer=true{% endif %}" class="filter-toggle {% if on_offer %}filter-toggle--active{% endif %}">
+        {% if on_offer %}
+        <span>Solo ofertas activadas</span>
+        <a href="{{ request.path }}" class="filter-toggle__clear">Mostrar todos</a>
+        {% else %}
+        <a href="?on_offer=true" class="filter-toggle__link">Solo ofertas</a>
+        {% endif %}
+    </a>
+</div>
+
+{% if products %}
 <div class="grid">
     {% for product in products %}
     <div class="card">
+        {% if product.images.all %}
+        <img src="{{ product.images.all.0.image.url }}" alt="{{ product.images.all.0.alt_text|default:product.name }}" class="card__image" loading="lazy">
+        {% endif %}
         <div class="card__body">
             <a href="{% url 'products:product_detail' product.slug %}">
                 <h3 class="card__title">{{ product.name }}</h3>
-                <p class="card__price">${{ product.base_price }}</p>
             </a>
+            {% with offer=product|active_offer %}
+            {% if offer %}
+            <p class="card__price">
+                <span class="price--original">${{ product.base_price }}</span>
+                <span class="price--discounted">${{ product|discounted_price }}</span>
+            </p>
+            <span class="offer-badge">
+                {% if offer.discount_type == 'percentage' %}-{{ offer.discount_value|floatformat:0 }}%{% else %}-${{ offer.discount_value }}{% endif %}
+            </span>
+            {% else %}
+            <p class="card__price">${{ product.base_price }}</p>
+            {% endif %}
+            {% endwith %}
         </div>
     </div>
     {% endfor %}
@@ -20,12 +50,15 @@
 {% if is_paginated %}
 <div class="pagination">
     {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+    <a href="?page={{ page_obj.previous_page_number }}{% if on_offer %}&on_offer=true{% endif %}">Anterior</a>
     {% endif %}
     <span class="current">Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
     {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+    <a href="?page={{ page_obj.next_page_number }}{% if on_offer %}&on_offer=true{% endif %}">Siguiente</a>
     {% endif %}
 </div>
+{% endif %}
+{% else %}
+<p class="empty">No se encontraron productos en esta categoria.</p>
 {% endif %}
 {% endblock %}

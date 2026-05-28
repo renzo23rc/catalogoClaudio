@@ -1,7 +1,9 @@
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.views.generic import DetailView, ListView, TemplateView
 
+from offers.models import Offer
 from .models import Category, Product
 
 
@@ -11,9 +13,29 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.filter(parent=None, is_active=True)
-        context['featured_products'] = Product.objects.filter(is_active=True)[:6]
-        # Active offers will be added in PR 2 when the offers app is implemented.
-        context['offers'] = []
+
+        featured = list(Product.objects.filter(is_active=True)[:6])
+        context['featured_products'] = featured
+
+        now = timezone.now()
+        active_offers = Offer.objects.filter(
+            is_active=True,
+            start_date__lte=now,
+            end_date__gte=now
+        ).prefetch_related('products')
+
+        offer_products = []
+        seen = set()
+        for offer in active_offers:
+            for product in offer.products.filter(is_active=True):
+                if product.id not in seen:
+                    seen.add(product.id)
+                    offer_products.append({
+                        'product': product,
+                        'discounted_price': offer.get_discounted_price(product),
+                        'offer': offer,
+                    })
+        context['offer_products'] = offer_products
         return context
 
 
@@ -28,14 +50,23 @@ class CategoryListView(ListView):
         category_ids = {self.category.id}
         for descendant in self.category.get_descendants():
             category_ids.add(descendant.id)
-        return Product.objects.filter(
+        qs = Product.objects.filter(
             category_id__in=category_ids,
             is_active=True
         )
+        if self.request.GET.get('on_offer') == 'true':
+            now = timezone.now()
+            qs = qs.filter(
+                offers__is_active=True,
+                offers__start_date__lte=now,
+                offers__end_date__gte=now
+            ).distinct()
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['category'] = self.category
+        context['on_offer'] = self.request.GET.get('on_offer') == 'true'
         return context
 
 
@@ -51,8 +82,19 @@ class ProductDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         product = self.object
-        # Primary image first, then the rest ordered by `order`.
-        context['images'] = product.images.all()
+        context['images'] = product.images.all().order_by('-is_primary', 'order')
+        context['primary_image'] = product.images.filter(is_primary=True).first()
+        context['other_images'] = product.images.filter(is_primary=False).order_by('order')
+
+        now = timezone.now()
+        active_offer = product.offers.filter(
+            is_active=True,
+            start_date__lte=now,
+            end_date__gte=now
+        ).first()
+        if active_offer:
+            context['active_offer'] = active_offer
+            context['discounted_price'] = active_offer.get_discounted_price(product)
         return context
 
 
