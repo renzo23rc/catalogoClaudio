@@ -1,0 +1,32 @@
+{% extends 'products/base.html' %}
+
+{% block content %}
+<h1>Inicio</h1>
+
+<h2>Categorias</h2>
+<div class="grid">
+    {% for category in categories %}
+    <div class="card">
+        <div class="card__body">
+            <a href="{% url 'products:category' category.slug %}">
+                <h3 class="card__title">{{ category.name }}</h3>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<h2>Destacados</h2>
+<div class="grid">
+    {% for product in featured_products %}
+    <div class="card">
+        <div class="card__body">
+            <a href="{% url 'products:product_detail' product.slug %}">
+                <h3 class="card__title">{{ product.name }}</h3>
+                <p class="card__price">${{ product.base_price }}</p>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
