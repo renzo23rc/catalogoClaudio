@@ -484,7 +484,38 @@ main.container {
 .card__meta {
   font-size: var(--text-xs);
   color: var(--color-text-muted);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.card__stock {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.stock-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+}
+
+.stock-dot--ok {
+  background: var(--color-success);
+  box-shadow: 0 0 0 2px var(--color-success-bg);
+}
+
+.stock-dot--no {
+  background: var(--color-danger);
+  box-shadow: 0 0 0 2px var(--color-danger-bg);
+}
+
+.card__updated {
+  font-size: 10px;
+  color: var(--color-neutral-400);
+  text-align: right;
+  padding: 0 var(--space-4) var(--space-2);
+  margin-top: -4px;
 }
 
 .card__footer {

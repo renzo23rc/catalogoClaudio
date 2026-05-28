@@ -41,39 +41,7 @@
     <h2 class="section__title">Destacados</h2>
     <div class="grid">
         {% for product in featured_products %}
-        <article class="card">
-            <div class="card__image-wrap">
-                {% if product.images.all %}
-                <img src="{{ product.images.all.0.image.url }}" alt="{{ product.images.all.0.alt_text|default:product.name }}" class="card__image" loading="lazy">
-                {% else %}
-                <div class="card__image" style="background: var(--color-neutral-200);"></div>
-                {% endif %}
-                {% with offer=product|active_offer %}
-                {% if offer %}
-                <span class="offer-badge">
-                    {% if offer.discount_type == 'percentage' %}-{{ offer.discount_value|floatformat:0 }}%{% else %}-${{ offer.discount_value }}{% endif %}
-                </span>
-                {% endif %}
-                {% endwith %}
-            </div>
-            <div class="card__body">
-                <a href="{% url 'products:product_detail' product.slug %}">
-                    <h3 class="card__title">{{ product.name }}</h3>
-                </a>
-                <div class="card__footer">
-                    {% with offer=product|active_offer %}
-                    {% if offer %}
-                    <p class="card__price">
-                        <span class="price--original">${{ product.base_price }}</span>
-                        <span class="price--discounted">${{ product|discounted_price }}</span>
-                    </p>
-                    {% else %}
-                    <p class="card__price">${{ product.base_price }}</p>
-                    {% endif %}
-                    {% endwith %}
-                </div>
-            </div>
-        </article>
+        {% include 'products/includes/product_card.html' %}
         {% endfor %}
     </div>
 </section>
@@ -84,29 +52,9 @@
     <h2 class="section__title">Ofertas activas</h2>
     <div class="grid">
         {% for item in offer_products %}
-        <article class="card card--offer">
-            <div class="card__image-wrap">
-                {% if item.product.images.all %}
-                <img src="{{ item.product.images.all.0.image.url }}" alt="{{ item.product.images.all.0.alt_text|default:item.product.name }}" class="card__image" loading="lazy">
-                {% else %}
-                <div class="card__image" style="background: var(--color-neutral-200);"></div>
-                {% endif %}
-                <span class="offer-badge">
-                    {% if item.offer.discount_type == 'percentage' %}-{{ item.offer.discount_value|floatformat:0 }}%{% else %}-${{ item.offer.discount_value }}{% endif %}
-                </span>
-            </div>
-            <div class="card__body">
-                <a href="{% url 'products:product_detail' item.product.slug %}">
-                    <h3 class="card__title">{{ item.product.name }}</h3>
-                </a>
-                <div class="card__footer">
-                    <p class="card__price">
-                        <span class="price--original">${{ item.product.base_price }}</span>
-                        <span class="price--discounted">${{ item.discounted_price }}</span>
-                    </p>
-                </div>
-            </div>
-        </article>
+        {% with product=item.product %}
+        {% include 'products/includes/product_card.html' %}
+        {% endwith %}
         {% endfor %}
     </div>
 </section>
