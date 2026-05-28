@@ -26,7 +26,15 @@ class HomeView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.filter(parent=None, is_active=True)
 
-        featured = list(Product.objects.filter(is_active=True).prefetch_related('images', 'offers')[:6])
+        featured = list(
+            Product.objects.filter(is_active=True, is_featured=True)
+            .prefetch_related('images', 'offers')
+        )
+        if not featured:
+            featured = list(
+                Product.objects.filter(is_active=True)
+                .prefetch_related('images', 'offers')[:6]
+            )
         context['featured_products'] = featured
 
         now = timezone.now()

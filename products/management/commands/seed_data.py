@@ -38,23 +38,34 @@ class Command(BaseCommand):
             ('Chocolate Milka 100g', alimentos, 1200.00, 85, 15),
         ]
 
+        featured_names = ['Coca-Cola 2.25L', 'Papas Lays Clasicas 200g', 'Jabón en polvo Skip 3kg', 'Cerveza Stella Artois 1L']
+
+        # Update existing featured products
+        Product.objects.filter(name__in=featured_names).update(is_featured=True)
+
         products = []
         for name, category, price, stock, threshold in product_data:
+            if Product.objects.filter(name=name).exists():
+                continue
+            base_slug = slugify(name)
+            slug = base_slug
+            counter = 1
+            while Product.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
             sku = slugify(name).replace('-', '')[:20].upper() + str(random.randint(10, 99))
-            product, created = Product.objects.get_or_create(
+            product = Product.objects.create(
+                name=name,
+                slug=slug,
                 sku=sku,
-                defaults={
-                    'name': name,
-                    'slug': slugify(name),
-                    'base_price': price,
-                    'category': category,
-                    'stock_quantity': stock,
-                    'min_stock_threshold': threshold,
-                    'is_active': True,
-                }
+                base_price=price,
+                category=category,
+                stock_quantity=stock,
+                min_stock_threshold=threshold,
+                is_active=True,
+                is_featured=name in featured_names,
             )
-            if created:
-                products.append(product)
+            products.append(product)
 
         self.stdout.write(f'  {len(products)} productos creados.')
 

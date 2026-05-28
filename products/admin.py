@@ -38,12 +38,12 @@ class ProductImageInline(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = [
-        'name', 'sku', 'category', 'stock_quantity_colored',
-        'min_stock_threshold', 'base_price', 'is_active'
+        'name', 'sku', 'category', 'is_featured', 'stock_quantity',
+        'stock_quantity_colored', 'min_stock_threshold', 'base_price', 'is_active'
     ]
-    list_filter = ['category', 'is_active', LowStockFilter]
+    list_filter = ['category', 'is_active', 'is_featured', LowStockFilter]
     search_fields = ['name', 'sku', 'description']
-    list_editable = ['stock_quantity', 'min_stock_threshold']
+    list_editable = ['stock_quantity', 'min_stock_threshold', 'is_featured']
     inlines = [ProductImageInline]
     actions = ['export_to_csv', 'mark_inactive', 'set_stock_to_zero']
     prepopulated_fields = {'slug': ('name',)}

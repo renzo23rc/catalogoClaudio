@@ -19,6 +19,7 @@ class Product(models.Model):
     stock_quantity = models.PositiveIntegerField(default=0, verbose_name='stock')
     min_stock_threshold = models.PositiveIntegerField(default=10, verbose_name='stock minimo')
     is_active = models.BooleanField(default=True, verbose_name='activo')
+    is_featured = models.BooleanField(default=False, verbose_name='destacado')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='creado')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='actualizado')
 
