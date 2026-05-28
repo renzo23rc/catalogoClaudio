@@ -6,3 +6,5 @@ django-colorfield>=0.11
 gunicorn>=21.2
 psycopg2-binary>=2.9
 django-storages[s3]>=1.14
+pytest-django>=4.8
+model-bakery>=1.17
