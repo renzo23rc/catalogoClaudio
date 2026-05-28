@@ -9,12 +9,12 @@
 ## Phase 1: Project Setup (Files 1-8)
 
 ### 1.1 Create Django project structure
-- [ ] `manage.py` — Django project entry point
-- [ ] `catalogo/__init__.py` — Project package marker
-- [ ] `catalogo/settings.py` — Single settings with `python-dotenv`, SQLite, media config
-- [ ] `catalogo/urls.py` — Root URLconf: `/admin/`, `/media/`, public catalog include
-- [ ] `catalogo/wsgi.py` — WSGI application
-- [ ] `catalogo/asgi.py` — ASGI application
+- [x] `manage.py` — Django project entry point
+- [x] `catalogo/__init__.py` — Project package marker
+- [x] `catalogo/settings.py` — Single settings with `python-dotenv`, SQLite, media config
+- [x] `catalogo/urls.py` — Root URLconf: `/admin/`, `/media/`, public catalog include
+- [x] `catalogo/wsgi.py` — WSGI application
+- [x] `catalogo/asgi.py` — ASGI application
 
 **Acceptance Criteria**:
 - `python manage.py check` runs without errors
@@ -22,9 +22,9 @@
 - Media root configured to `/media/` directory
 
 ### 1.2 Create requirements and static assets
-- [ ] `requirements.txt` — Django, Pillow, python-dotenv
-- [ ] `static/css/base.css` — Base CSS for public catalog
-- [ ] `media/.gitkeep` — Upload root placeholder (gitignored)
+- [x] `requirements.txt` — Django, Pillow, python-dotenv
+- [x] `static/css/base.css` — Base CSS for public catalog
+- [x] `media/.gitkeep` — Upload root placeholder (gitignored)
 
 **Acceptance Criteria**:
 - `pip install -r requirements.txt` installs all dependencies
@@ -35,10 +35,10 @@
 ## Phase 2: Products App - Models (Files 9-13)
 
 ### 2.1 Create products app package
-- [ ] `products/__init__.py` — App package marker
+- [x] `products/__init__.py` — App package marker
 
 ### 2.2 Create Category model
-- [ ] `products/models/category.py`
+- [x] `products/models/category.py`
   - Fields: `name`, `slug` (unique), `description`, `parent` (FK self, null/blank), `is_active`, `created_at`
   - Meta: ordering by `name`
   - `__str__`: returns name with parent prefix if applicable
@@ -49,7 +49,7 @@
 - Inactive categories can be hidden from public views
 
 ### 2.3 Create Product model
-- [ ] `products/models/product.py`
+- [x] `products/models/product.py`
   - Fields: `name`, `slug` (unique), `sku` (unique), `description`, `base_price` (Decimal(10,2)), `category` (FK Category), `stock_quantity` (PositiveIntegerField), `is_active`, `created_at`, `updated_at`
   - Meta: ordering by `-created_at`
   - `__str__`: returns name
@@ -60,7 +60,7 @@
 - Stock quantity cannot be negative
 
 ### 2.4 Create ProductImage model
-- [ ] `products/models/image.py`
+- [x] `products/models/image.py`
   - Fields: `product` (FK Product, related_name='images'), `image` (ImageField), `is_primary` (Boolean), `alt_text`, `order` (PositiveIntegerField)
   - `upload_to` callable: `products/<sku>/<filename>`
   - Meta: ordering by `order`
@@ -71,7 +71,7 @@
 - Order field controls display sequence
 
 ### 2.5 Create models package export
-- [ ] `products/models/__init__.py` — Re-export Category, Product, ProductImage
+- [x] `products/models/__init__.py` — Re-export Category, Product, ProductImage
 
 **Acceptance Criteria**:
 - `from products.models import Category, Product, ProductImage` works
@@ -81,7 +81,7 @@
 ## Phase 3: Products App - Admin & Views (Files 14-16)
 
 ### 3.1 Create Product admin configuration
-- [ ] `products/admin.py`
+- [x] `products/admin.py`
   - ProductImageInline (TabularInline)
   - ProductAdmin with:
     - `list_display`: name, sku, category, stock_quantity, base_price, is_active
@@ -103,7 +103,7 @@
 - Images can be added inline on product edit page
 
 ### 3.2 Create public catalog views
-- [ ] `products/views.py`
+- [x] `products/views.py`
   - `HomeView` (TemplateView): Display root categories, featured products, active offers
   - `CategoryListView` (ListView): Paginated product grid for category + subcategories
   - `ProductDetailView` (DetailView): Product details with image gallery
@@ -116,7 +116,7 @@
 - Search supports `?q=` query parameter
 
 ### 3.3 Create products URL patterns
-- [ ] `products/urls.py`
+- [x] `products/urls.py`
   ```python
   urlpatterns = [
       path("", HomeView.as_view(), name="home"),
@@ -135,32 +135,32 @@
 ## Phase 4: Products App - Templates (Files 17-20)
 
 ### 4.1 Create base template
-- [ ] `products/templates/products/base.html`
+- [x] `products/templates/products/base.html`
   - HTML5 boilerplate with `{% block content %}`
   - Include base.css
   - Navigation with search bar
 
 ### 4.2 Create homepage template
-- [ ] `products/templates/products/home.html`
+- [x] `products/templates/products/home.html`
   - Root categories grid
   - Featured products section
   - Active offers section
 
 ### 4.3 Create category list template
-- [ ] `products/templates/products/category_list.html`
+- [x] `products/templates/products/category_list.html`
   - Category title and description
   - Product grid with pagination
   - Filter sidebar (category, price range, on offer toggle)
 
 ### 4.4 Create product detail template
-- [ ] `products/templates/products/product_detail.html`
+- [x] `products/templates/products/product_detail.html`
   - Product name, SKU, description
   - Price display (with offer discount if active)
   - Stock availability indicator
   - Image gallery (primary + thumbnails)
 
 ### 4.5 Create search template
-- [ ] `products/templates/products/search.html`
+- [x] `products/templates/products/search.html`
   - Search form with current query
   - Results grid (same as category list)
   - "No results" message
@@ -176,10 +176,10 @@
 ## Phase 5: Offers App (Files 21-23)
 
 ### 5.1 Create offers app package
-- [ ] `offers/__init__.py` — App package marker
+- [x] `offers/__init__.py` — App package marker
 
 ### 5.2 Create Offer model
-- [ ] `offers/models.py`
+- [x] `offers/models.py`
   - Fields: `name`, `description`, `discount_type` (choices: percentage/fixed), `discount_value` (Decimal(10,2)), `start_date`, `end_date`, `is_active`, `products` (M2M Product, related_name='offers'), `created_at`
   - Property `is_currently_active`: checks dates + is_active flag
   - Method `get_discounted_price(product)`: calculates effective price
@@ -192,7 +192,7 @@
 - M2M allows one offer to apply to multiple products
 
 ### 5.3 Create Offer admin configuration
-- [ ] `offers/admin.py`
+- [x] `offers/admin.py`
   - OfferAdmin with:
     - `list_display`: name, discount_type, discount_value, start_date, end_date, is_currently_active
     - `list_filter`: discount_type, is_active, start_date, end_date
@@ -210,7 +210,7 @@
 ## Phase 6: Integration & Configuration (Files 24-26)
 
 ### 6.1 Update project URLs
-- [ ] Modify `catalogo/urls.py`
+- [x] Modify `catalogo/urls.py`
   - Include admin: `path('admin/', admin.site.urls)`
   - Include products app: `path('', include('products.urls'))`
   - Serve media in development: `static(settings.MEDIA_URL, ...)`
@@ -221,7 +221,7 @@
 - Media files served in development
 
 ### 6.2 Update settings
-- [ ] Modify `catalogo/settings.py`
+- [x] Modify `catalogo/settings.py`
   - Add `'products'` and `'offers'` to `INSTALLED_APPS`
   - Configure `MEDIA_ROOT` and `MEDIA_URL`
   - Set up `python-dotenv` integration
@@ -232,10 +232,10 @@
 - Environment variables load from `.env`
 
 ### 6.3 Create migrations and test
-- [ ] Run `python manage.py makemigrations`
-- [ ] Run `python manage.py migrate`
-- [ ] Create superuser for admin testing
-- [ ] Verify all models migrate without errors
+- [x] Run `python manage.py makemigrations`
+- [x] Run `python manage.py migrate`
+- [x] Create superuser for admin testing
+- [x] Verify all models migrate without errors
 
 **Acceptance Criteria**:
 - Migrations create all tables
@@ -276,6 +276,6 @@
 
 ## Progress Tracking
 
-**Completed**: []  
-**In Progress**: []  
-**Pending**: [1.1, 1.2, 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.3, 4.1, 4.2, 4.3, 4.4, 4.5, 5.1, 5.2, 5.3, 6.1, 6.2, 6.3]
+**Completed**: [1.1, 1.2, 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.3, 6.1, 6.2, 6.3]
+**In Progress**: []
+**Pending**: []
