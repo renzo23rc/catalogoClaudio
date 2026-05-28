@@ -1,0 +1,17 @@
+{% extends 'products/base.html' %}
+
+{% block content %}
+<h1>{{ product.name }}</h1>
+<p>SKU: {{ product.sku }}</p>
+<p>{{ product.description }}</p>
+<p class="card__price">${{ product.base_price }}</p>
+<p>Stock: {{ product.stock_quantity }}</p>
+
+{% if images %}
+<div>
+    {% for image in images %}
+    <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}" style="max-width:200px;">
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

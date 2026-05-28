@@ -1,0 +1,31 @@
+{% extends 'products/base.html' %}
+
+{% block content %}
+<h1>{{ category.name }}</h1>
+<p>{{ category.description }}</p>
+
+<div class="grid">
+    {% for product in products %}
+    <div class="card">
+        <div class="card__body">
+            <a href="{% url 'products:product_detail' product.slug %}">
+                <h3 class="card__title">{{ product.name }}</h3>
+                <p class="card__price">${{ product.base_price }}</p>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+    {% endif %}
+    <span class="current">Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
