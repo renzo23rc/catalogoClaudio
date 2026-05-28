@@ -1,0 +1,17 @@
+{% extends 'products/base.html' %}
+{% block title %}Pedido recibido | Catalogo{% endblock %}
+{% block content %}
+<div class="empty-state" style="padding: var(--space-16) var(--space-4);">
+    <div class="empty-state__icon" style="opacity: 1; color: var(--color-success);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+    </div>
+    <h1 class="empty-state__title">Pedido recibido</h1>
+    <p class="empty-state__text">
+        Gracias, <strong>{{ order.client_name }}</strong>. Tu solicitud de pedido <strong>#{{ order.id }}</strong> fue registrada.
+    </p>
+    <p class="empty-state__text" style="margin-top: var(--space-4);">
+        Los pedidos son por encargo. Te contactaremos a la brevedad para confirmar disponibilidad y coordinar la entrega.
+    </p>
+    <a href="{% url 'products:home' %}" class="hero__cta" style="margin-top: var(--space-8);">Volver al inicio</a>
+</div>
+{% endblock %}

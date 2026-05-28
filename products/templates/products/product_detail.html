@@ -75,6 +75,15 @@
             <h2>Descripcion</h2>
             <p>{{ product.description|linebreaksbr|default:"Sin descripcion disponible." }}</p>
         </div>
+
+        {% if product.stock_quantity > 0 %}
+        <form action="{% url 'orders:add_to_cart' product.id %}" method="post" class="product-detail__actions" style="display: flex; gap: var(--space-3); align-items: center; margin-top: var(--space-4);">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock_quantity }}" class="cart__qty-input" style="width: 5rem;">
+            <button type="submit" class="hero__cta" style="margin-top: 0;">Agregar al carrito</button>
+        </form>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

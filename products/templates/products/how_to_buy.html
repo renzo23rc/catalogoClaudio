@@ -1,0 +1,38 @@
+{% extends 'products/base.html' %}
+{% block title %}Como comprar | Catalogo{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Migas de pan">
+    <a href="{% url 'products:home' %}">Inicio</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <span class="breadcrumb__current">Como comprar</span>
+</nav>
+
+<section class="section">
+    <h1 class="section__title" style="--section-title-after: none;">Como comprar</h1>
+    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-6); margin-top: var(--space-6);">
+        <div class="card" style="padding: var(--space-6); text-align: center;">
+            <div style="font-size: var(--text-3xl); margin-bottom: var(--space-4);">1</div>
+            <h2 class="card__title">Explora el catalogo</h2>
+            <p style="color: var(--color-neutral-600); font-size: var(--text-sm);">Navega por categorias y descubre los productos que necesitas para tu negocio.</p>
+        </div>
+        <div class="card" style="padding: var(--space-6); text-align: center;">
+            <div style="font-size: var(--text-3xl); margin-bottom: var(--space-4);">2</div>
+            <h2 class="card__title">Agrega al carrito</h2>
+            <p style="color: var(--color-neutral-600); font-size: var(--text-sm);">Selecciona cantidades y arma tu pedido. Podes modificarlo antes de enviarlo.</p>
+        </div>
+        <div class="card" style="padding: var(--space-6); text-align: center;">
+            <div style="font-size: var(--text-3xl); margin-bottom: var(--space-4);">3</div>
+            <h2 class="card__title">Solicita tu pedido</h2>
+            <p style="color: var(--color-neutral-600); font-size: var(--text-sm);">Completa tus datos y envianos la solicitud. Es rapido y sin compromiso.</p>
+        </div>
+        <div class="card" style="padding: var(--space-6); text-align: center;">
+            <div style="font-size: var(--text-3xl); margin-bottom: var(--space-4);">4</div>
+            <h2 class="card__title">Te contactamos</h2>
+            <p style="color: var(--color-neutral-600); font-size: var(--text-sm);">Confirmamos disponibilidad, precios y coordinamos la entrega o retiro.</p>
+        </div>
+    </div>
+    <div style="text-align: center; margin-top: var(--space-12);">
+        <a href="{% url 'products:home' %}" class="hero__cta">Empezar a comprar</a>
+    </div>
+</section>
+{% endblock %}

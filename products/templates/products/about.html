@@ -1,0 +1,28 @@
+{% extends 'products/base.html' %}
+{% block title %}Quienes somos | Catalogo{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Migas de pan">
+    <a href="{% url 'products:home' %}">Inicio</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <span class="breadcrumb__current">Quienes somos</span>
+</nav>
+
+<section class="section">
+    <h1 class="section__title" style="--section-title-after: none;">Quienes somos</h1>
+    <div style="max-width: 700px;">
+        <p style="margin-bottom: var(--space-4); color: var(--color-neutral-600); line-height: 1.7;">
+            Somos una distribuidora mayorista con anos de experiencia abasteciendo negocios de todo el pais.
+            Nuestro compromiso es ofrecer productos de calidad a precios competitivos, con un servicio de atencion personalizado.
+        </p>
+        <p style="margin-bottom: var(--space-4); color: var(--color-neutral-600); line-height: 1.7;">
+            Trabajamos con marcas lideres y productos propios, garantizando stock, entregas puntuales y condiciones comerciales adaptadas a cada cliente.
+        </p>
+        <h2 style="font-size: var(--text-xl); font-weight: var(--font-bold); margin: var(--space-8) 0 var(--space-4); color: var(--color-neutral-900);">Nuestros valores</h2>
+        <ul style="color: var(--color-neutral-600); line-height: 1.8; padding-left: var(--space-5);">
+            <li><strong>Compromiso</strong> con la calidad y la mejora continua.</li>
+            <li><strong>Confianza</strong> basada en transparencia y cumplimiento.</li>
+            <li><strong>Cercania</strong> para entender y resolver las necesidades de cada negocio.</li>
+        </ul>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'products/base.html' %}
+{% block title %}Checkout | Catalogo{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Migas de pan">
+    <a href="{% url 'products:home' %}">Inicio</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <a href="{% url 'orders:cart' %}">Carrito</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <span class="breadcrumb__current">Solicitar pedido</span>
+</nav>
+
+<h1 class="section__title" style="--section-title-after: none;">Solicitar pedido</h1>
+
+<div class="checkout">
+    <div class="checkout__summary">
+        <h2 class="checkout__subtitle">Resumen</h2>
+        <ul class="checkout__items">
+            {% for item in items %}
+            <li>
+                <span>{{ item.product.name }} x{{ item.quantity }}</span>
+                <span>${{ item.total }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="checkout__total">
+            <span>Total estimado</span>
+            <strong>${{ total }}</strong>
+        </div>
+    </div>
+
+    <form method="post" class="checkout__form">
+        {% csrf_token %}
+        <p class="checkout__notice">
+            Los pedidos son por encargo. Te contactaremos para confirmar disponibilidad y coordinar la entrega.
+        </p>
+
+        <div class="form-group">
+            <label for="id_client_name">Nombre y apellido *</label>
+            <input type="text" id="id_client_name" name="client_name" value="{{ client_name|default:'' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="id_client_phone">Telefono *</label>
+            <input type="tel" id="id_client_phone" name="client_phone" value="{{ client_phone|default:'' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="id_client_email">Email *</label>
+            <input type="email" id="id_client_email" name="client_email" value="{{ client_email|default:'' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="id_notes">Notas adicionales</label>
+            <textarea id="id_notes" name="notes" rows="3">{{ notes|default:'' }}</textarea>
+        </div>
+
+        <button type="submit" class="hero__cta" style="width: 100%; justify-content: center;">Enviar solicitud de pedido</button>
+    </form>
+</div>
+{% endblock %}

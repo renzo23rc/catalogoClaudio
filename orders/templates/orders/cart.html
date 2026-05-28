@@ -1,0 +1,72 @@
+{% extends 'products/base.html' %}
+{% block title %}Carrito | Catalogo{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Migas de pan">
+    <a href="{% url 'products:home' %}">Inicio</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <span class="breadcrumb__current">Carrito</span>
+</nav>
+
+<h1 class="section__title" style="--section-title-after: none;">Tu carrito</h1>
+
+{% if items %}
+<div class="cart">
+    <table class="cart__table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio unitario</th>
+                <th>Cantidad</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>
+                    <a href="{% url 'products:product_detail' item.product.slug %}" class="cart__product">
+                        {% if item.product.images.all %}
+                        <img src="{{ item.product.images.all.0.image.url }}" alt="{{ item.product.images.all.0.alt_text|default:item.product.name }}" class="cart__thumb">
+                        {% else %}
+                        <div class="cart__thumb" style="background: var(--color-neutral-200);"></div>
+                        {% endif %}
+                        <span>{{ item.product.name }}</span>
+                    </a>
+                </td>
+                <td>${{ item.product.base_price }}</td>
+                <td>
+                    <form action="{% url 'orders:update_cart' item.product.id %}" method="post" class="cart__qty-form">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="cart__qty-input">
+                        <button type="submit" class="cart__qty-btn">Actualizar</button>
+                    </form>
+                </td>
+                <td class="cart__line-total">${{ item.total }}</td>
+                <td>
+                    <a href="{% url 'orders:remove_from_cart' item.product.id %}" class="cart__remove" aria-label="Eliminar {{ item.product.name }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="cart__footer">
+        <div class="cart__total">
+            <span>Total estimado</span>
+            <strong>${{ total }}</strong>
+        </div>
+        <p class="cart__note">Los pedidos son por encargo. Te contactaremos para confirmar disponibilidad y coordinar la entrega.</p>
+        <a href="{% url 'orders:checkout' %}" class="hero__cta" style="margin-top: var(--space-4);">Solicitar pedido</a>
+    </div>
+</div>
+{% else %}
+<div class="empty-state">
+    <p class="empty-state__title">Tu carrito esta vacio</p>
+    <p class="empty-state__text">Explora el catalogo y agrega los productos que necesites.</p>
+    <a href="{% url 'products:home' %}" class="hero__cta" style="margin-top: var(--space-4);">Explorar catalogo</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'products/base.html' %}
+{% block title %}Contacto | Catalogo{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Migas de pan">
+    <a href="{% url 'products:home' %}">Inicio</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <span class="breadcrumb__current">Contacto</span>
+</nav>
+
+<section class="section">
+    <h1 class="section__title" style="--section-title-after: none;">Contacto</h1>
+    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+        <div class="card" style="padding: var(--space-6);">
+            <h2 class="card__title" style="margin-bottom: var(--space-4);">Telefono</h2>
+            <p style="color: var(--color-neutral-600);">+54 11 1234-5678</p>
+            <p style="color: var(--color-neutral-500); font-size: var(--text-sm); margin-top: var(--space-2);">Lunes a viernes de 9 a 18 hs.</p>
+        </div>
+        <div class="card" style="padding: var(--space-6);">
+            <h2 class="card__title" style="margin-bottom: var(--space-4);">Email</h2>
+            <p style="color: var(--color-neutral-600);">ventas@catalogo.com</p>
+            <p style="color: var(--color-neutral-500); font-size: var(--text-sm); margin-top: var(--space-2);">Respondemos en menos de 24 hs.</p>
+        </div>
+        <div class="card" style="padding: var(--space-6);">
+            <h2 class="card__title" style="margin-bottom: var(--space-4);">Direccion</h2>
+            <p style="color: var(--color-neutral-600);">Av. Siempre Viva 1234</p>
+            <p style="color: var(--color-neutral-500); font-size: var(--text-sm); margin-top: var(--space-2);">Ciudad Autonoma de Buenos Aires</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

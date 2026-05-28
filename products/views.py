@@ -7,6 +7,18 @@ from offers.models import Offer
 from .models import Category, Product
 
 
+class AboutView(TemplateView):
+    template_name = 'products/about.html'
+
+
+class ContactView(TemplateView):
+    template_name = 'products/contact.html'
+
+
+class HowToBuyView(TemplateView):
+    template_name = 'products/how_to_buy.html'
+
+
 class HomeView(TemplateView):
     template_name = 'products/home.html'
 

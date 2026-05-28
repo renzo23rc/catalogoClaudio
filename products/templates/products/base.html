@@ -15,12 +15,29 @@
                 Catalogo
             </a>
 
+            <button class="nav__menu-toggle" aria-label="Abrir menu" aria-expanded="false" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open'); this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'false' ? 'true' : 'false');">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg>
+            </button>
+
             <form class="nav__search" action="{% url 'products:search' %}" method="get" role="search">
                 <input type="text" name="q" placeholder="Buscar productos..." value="{{ query|default:'' }}" aria-label="Buscar productos">
                 <button type="submit">Buscar</button>
             </form>
 
+            <nav class="nav__links" aria-label="Navegacion principal">
+                <a href="{% url 'products:home' %}">Inicio</a>
+                <a href="{% url 'products:how_to_buy' %}">Como comprar</a>
+                <a href="{% url 'products:about' %}">Quienes somos</a>
+                <a href="{% url 'products:contact' %}">Contacto</a>
+            </nav>
+
             <div class="nav__actions">
+                <a href="{% url 'orders:cart' %}" class="nav__cart" aria-label="Carrito">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M6 6L5 3H2"/></svg>
+                    {% if cart_count %}
+                    <span class="nav__cart-badge">{{ cart_count }}</span>
+                    {% endif %}
+                </a>
                 <a href="/admin/" class="nav__admin-link" title="Panel de Administracion">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
@@ -43,6 +60,10 @@
             </div>
             <nav class="footer__links" aria-label="Enlaces del pie">
                 <a href="{% url 'products:home' %}">Inicio</a>
+                <a href="{% url 'products:how_to_buy' %}">Como comprar</a>
+                <a href="{% url 'products:about' %}">Quienes somos</a>
+                <a href="{% url 'products:contact' %}">Contacto</a>
+                <a href="{% url 'orders:cart' %}">Carrito</a>
                 <a href="/admin/" class="footer__admin">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
