@@ -26,7 +26,7 @@ class HomeView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.filter(parent=None, is_active=True)
 
-        featured = list(Product.objects.filter(is_active=True)[:6])
+        featured = list(Product.objects.filter(is_active=True).prefetch_related('images', 'offers')[:6])
         context['featured_products'] = featured
 
         now = timezone.now()
@@ -65,7 +65,7 @@ class CategoryListView(ListView):
         qs = Product.objects.filter(
             category_id__in=category_ids,
             is_active=True
-        )
+        ).prefetch_related('images', 'offers')
         if self.request.GET.get('on_offer') == 'true':
             now = timezone.now()
             qs = qs.filter(
@@ -118,7 +118,7 @@ class SearchView(ListView):
 
     def get_queryset(self):
         query = self.request.GET.get('q', '')
-        qs = Product.objects.filter(is_active=True)
+        qs = Product.objects.filter(is_active=True).prefetch_related('images', 'offers')
         if query:
             qs = qs.filter(
                 Q(name__icontains=query) | Q(description__icontains=query)

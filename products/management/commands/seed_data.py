@@ -21,25 +21,25 @@ class Command(BaseCommand):
 
         self.stdout.write('Creando productos...')
         product_data = [
-            ('Coca-Cola 2.25L', gaseosas, 1200.00, 150),
-            ('Sprite 2.25L', gaseosas, 1150.00, 120),
-            ('Fanta Naranja 2.25L', gaseosas, 1150.00, 100),
-            ('Cerveza Quilmes 1L', bebidas_alcoholicas, 1800.00, 80),
-            ('Cerveza Stella Artois 1L', bebidas_alcoholicas, 2200.00, 60),
-            ('Papas Lays Clasicas 200g', snacks, 1500.00, 90),
-            ('Papas Pringles 150g', snacks, 2500.00, 70),
-            ('Maní salado 500g', snacks, 900.00, 110),
-            ('Detergente Ala 1.5L', limpieza, 1300.00, 200),
-            ('Lavandina Ayudín 2L', limpieza, 850.00, 180),
-            ('Jabón en polvo Skip 3kg', limpieza, 4500.00, 50),
-            ('Esponja Scotch-Brite x3', limpieza, 650.00, 300),
-            ('Agua mineral Villa del Sur 2L', bebidas, 700.00, 250),
-            ('Jugo Baggio Naranja 1L', bebidas, 950.00, 140),
-            ('Chocolate Milka 100g', alimentos, 1200.00, 85),
+            ('Coca-Cola 2.25L', gaseosas, 1200.00, 150, 20),
+            ('Sprite 2.25L', gaseosas, 1150.00, 120, 20),
+            ('Fanta Naranja 2.25L', gaseosas, 1150.00, 100, 20),
+            ('Cerveza Quilmes 1L', bebidas_alcoholicas, 1800.00, 80, 15),
+            ('Cerveza Stella Artois 1L', bebidas_alcoholicas, 2200.00, 60, 15),
+            ('Papas Lays Clasicas 200g', snacks, 1500.00, 90, 15),
+            ('Papas Pringles 150g', snacks, 2500.00, 70, 15),
+            ('Maní salado 500g', snacks, 900.00, 110, 15),
+            ('Detergente Ala 1.5L', limpieza, 1300.00, 200, 25),
+            ('Lavandina Ayudín 2L', limpieza, 850.00, 180, 25),
+            ('Jabón en polvo Skip 3kg', limpieza, 4500.00, 50, 10),
+            ('Esponja Scotch-Brite x3', limpieza, 650.00, 300, 30),
+            ('Agua mineral Villa del Sur 2L', bebidas, 700.00, 250, 30),
+            ('Jugo Baggio Naranja 1L', bebidas, 950.00, 140, 20),
+            ('Chocolate Milka 100g', alimentos, 1200.00, 85, 15),
         ]
 
         products = []
-        for name, category, price, stock in product_data:
+        for name, category, price, stock, threshold in product_data:
             sku = slugify(name).replace('-', '')[:20].upper() + str(random.randint(10, 99))
             product, created = Product.objects.get_or_create(
                 sku=sku,
@@ -49,6 +49,7 @@ class Command(BaseCommand):
                     'base_price': price,
                     'category': category,
                     'stock_quantity': stock,
+                    'min_stock_threshold': threshold,
                     'is_active': True,
                 }
             )
