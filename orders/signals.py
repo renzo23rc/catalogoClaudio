@@ -53,5 +53,5 @@ Admin: {settings.SITE_URL}/admin/orders/order/{instance.pk}/change/
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[settings.NOTIFICATION_EMAIL],
         html_message=html_message,
-        fail_silently=False,
+        fail_silently=True,
     )
