@@ -68,6 +68,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'orders.context_processors.cart_count',
+                'orders.context_processors.whatsapp_settings',
             ],
         },
     },
@@ -163,7 +164,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Site URL
 SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 
-# Email
+# Email (mantenemos por si se necesita)
 EMAIL_BACKEND = os.environ.get(
     'EMAIL_BACKEND',
     'django.core.mail.backends.console.EmailBackend'
@@ -175,3 +176,9 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@catalogo.com')
 NOTIFICATION_EMAIL = os.environ.get('NOTIFICATION_EMAIL', 'admin@catalogo.com')
+
+# WhatsApp
+WHATSAPP_NUMBER = os.environ.get('WHATSAPP_NUMBER', '5491155555555')  # Codigo pais + numero sin +
+WHATSAPP_GROUP_ID = os.environ.get('WHATSAPP_GROUP_ID', '')
+ULTRAMSG_INSTANCE_ID = os.environ.get('ULTRAMSG_INSTANCE_ID', '')
+ULTRAMSG_TOKEN = os.environ.get('ULTRAMSG_TOKEN', '')
