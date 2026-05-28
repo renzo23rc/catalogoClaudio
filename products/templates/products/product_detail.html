@@ -1,50 +1,79 @@
 {% extends 'products/base.html' %}
+{% load product_tags %}
 
 {% block title %}{{ product.name }} | Catalogo{% endblock %}
 
 {% block content %}
+<nav class="breadcrumb" aria-label="Migas de pan">
+    <a href="{% url 'products:home' %}">Inicio</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    {% if product.category %}
+    <a href="{% url 'products:category' product.category.slug %}">{{ product.category.name }}</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    {% endif %}
+    <span class="breadcrumb__current">{{ product.name }}</span>
+</nav>
+
 <div class="product-detail">
     <div class="product-detail__gallery">
-        {% if primary_image %}
-        <img src="{{ primary_image.image.url }}" alt="{{ primary_image.alt_text|default:product.name }}" class="product-detail__primary-image">
-        {% endif %}
+        <div class="product-detail__primary-wrap">
+            {% if primary_image %}
+            <img src="{{ primary_image.image.url }}" alt="{{ primary_image.alt_text|default:product.name }}" class="product-detail__primary-image" id="primary-image">
+            {% else %}
+            <div class="product-detail__primary-image" style="background: var(--color-neutral-200); display: flex; align-items: center; justify-content: center; color: var(--color-neutral-400); font-size: var(--text-sm);">Sin imagen</div>
+            {% endif %}
+        </div>
         {% if other_images %}
         <div class="product-detail__thumbnails">
             {% if primary_image %}
-            <img src="{{ primary_image.image.url }}" alt="{{ primary_image.alt_text|default:product.name }}" class="product-detail__thumbnail product-detail__thumbnail--active">
+            <img src="{{ primary_image.image.url }}" alt="{{ primary_image.alt_text|default:product.name }}" class="product-detail__thumbnail product-detail__thumbnail--active" data-src="{{ primary_image.image.url }}" onclick="document.getElementById('primary-image').src = this.dataset.src; document.querySelectorAll('.product-detail__thumbnail').forEach(t => t.classList.remove('product-detail__thumbnail--active')); this.classList.add('product-detail__thumbnail--active');">
             {% endif %}
             {% for image in other_images %}
-            <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}" class="product-detail__thumbnail">
+            <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}" class="product-detail__thumbnail" data-src="{{ image.image.url }}" onclick="document.getElementById('primary-image').src = this.dataset.src; document.querySelectorAll('.product-detail__thumbnail').forEach(t => t.classList.remove('product-detail__thumbnail--active')); this.classList.add('product-detail__thumbnail--active');">
             {% endfor %}
         </div>
         {% endif %}
     </div>
 
     <div class="product-detail__info">
-        <h1>{{ product.name }}</h1>
-        <p class="product-detail__sku">SKU: {{ product.sku }}</p>
-
-        {% if active_offer %}
-        <div class="product-detail__price">
-            <span class="price--original">${{ product.base_price }}</span>
-            <span class="price--discounted">${{ discounted_price }}</span>
+        <div class="product-detail__header">
+            <h1>{{ product.name }}</h1>
+            <span class="product-detail__sku">SKU: {{ product.sku }}</span>
         </div>
-        <span class="offer-badge offer-badge--large">
-            {% if active_offer.discount_type == 'percentage' %}-{{ active_offer.discount_value|floatformat:0 }}%{% else %}-${{ active_offer.discount_value }}{% endif %}
-        </span>
-        {% else %}
-        <p class="product-detail__price product-detail__price--single">${{ product.base_price }}</p>
-        {% endif %}
+
+        <div class="product-detail__price-block">
+            {% if active_offer %}
+            <div>
+                <p class="product-detail__price">
+                    <span class="price--original" style="font-size: var(--text-lg);">${{ product.base_price }}</span>
+                    <span class="price--discounted">${{ discounted_price }}</span>
+                </p>
+            </div>
+            <span class="offer-badge offer-badge--large">
+                {% if active_offer.discount_type == 'percentage' %}-{{ active_offer.discount_value|floatformat:0 }}% OFF{% else %}-${{ active_offer.discount_value }} OFF{% endif %}
+            </span>
+            {% else %}
+            <p class="product-detail__price product-detail__price--single">${{ product.base_price }}</p>
+            {% endif %}
+        </div>
 
         {% if product.stock_quantity > 0 %}
-        <p class="stock stock--available">En stock ({{ product.stock_quantity }} unidades)</p>
+        <p class="stock stock--available">
+            En stock
+            <span class="badge stock-badge--available">{{ product.stock_quantity }} unidades</span>
+        </p>
+        {% elif product.stock_quantity > 0 and product.stock_quantity <= 10 %}
+        <p class="stock stock--low">
+            Stock bajo
+            <span class="badge" style="color: var(--color-warning); background: #fef3c7;">{{ product.stock_quantity }} unidades</span>
+        </p>
         {% else %}
         <p class="stock stock--unavailable">Sin stock</p>
         {% endif %}
 
         <div class="product-detail__description">
             <h2>Descripcion</h2>
-            <p>{{ product.description|linebreaksbr }}</p>
+            <p>{{ product.description|linebreaksbr|default:"Sin descripcion disponible." }}</p>
         </div>
     </div>
 </div>

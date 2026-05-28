@@ -6,21 +6,31 @@
 {% block content %}
 <section class="hero">
     <h1 class="hero__title">Bienvenido a Catalogo</h1>
-    <p class="hero__subtitle">Descubre nuestros productos y las mejores ofertas del dia.</p>
+    <p class="hero__subtitle">Descubri nuestros productos y las mejores ofertas del dia para tu negocio.</p>
+    <a href="#categorias" class="hero__cta">
+        Explorar catalogo
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 13l5 5 5-5"/>
+            <path d="M7 6l5 5 5-5"/>
+        </svg>
+    </a>
 </section>
 
 {% if categories %}
-<section class="section">
+<section class="section" id="categorias">
     <h2 class="section__title">Categorias</h2>
-    <div class="grid">
+    <div class="grid grid--categories">
         {% for category in categories %}
-        <div class="card">
+        <a href="{% url 'products:category' category.slug %}" class="card card--category">
             <div class="card__body">
-                <a href="{% url 'products:category' category.slug %}">
-                    <h3 class="card__title">{{ category.name }}</h3>
-                </a>
+                <h3 class="card__title">{{ category.name }}</h3>
+                {% with product_count=category.products.count %}
+                <span class="card__count">
+                    {{ product_count }} producto{{ product_count|pluralize }}
+                </span>
+                {% endwith %}
             </div>
-        </div>
+        </a>
         {% endfor %}
     </div>
 </section>
@@ -31,31 +41,39 @@
     <h2 class="section__title">Destacados</h2>
     <div class="grid">
         {% for product in featured_products %}
-        <div class="card">
-            {% with primary=product.images.filter.is_primary %}
-            {% if product.images.all %}
-            <img src="{{ product.images.all.0.image.url }}" alt="{{ product.images.all.0.alt_text|default:product.name }}" class="card__image" loading="lazy">
-            {% endif %}
-            {% endwith %}
+        <article class="card">
+            <div class="card__image-wrap">
+                {% if product.images.all %}
+                <img src="{{ product.images.all.0.image.url }}" alt="{{ product.images.all.0.alt_text|default:product.name }}" class="card__image" loading="lazy">
+                {% else %}
+                <div class="card__image" style="background: var(--color-neutral-200);"></div>
+                {% endif %}
+                {% with offer=product|active_offer %}
+                {% if offer %}
+                <span class="offer-badge">
+                    {% if offer.discount_type == 'percentage' %}-{{ offer.discount_value|floatformat:0 }}%{% else %}-${{ offer.discount_value }}{% endif %}
+                </span>
+                {% endif %}
+                {% endwith %}
+            </div>
             <div class="card__body">
                 <a href="{% url 'products:product_detail' product.slug %}">
                     <h3 class="card__title">{{ product.name }}</h3>
                 </a>
-                {% with offer=product|active_offer %}
-                {% if offer %}
-                <p class="card__price">
-                    <span class="price--original">${{ product.base_price }}</span>
-                    <span class="price--discounted">${{ product|discounted_price }}</span>
-                </p>
-                <span class="offer-badge">
-                    {% if offer.discount_type == 'percentage' %}-{{ offer.discount_value|floatformat:0 }}%{% else %}-${{ offer.discount_value }}{% endif %}
-                </span>
-                {% else %}
-                <p class="card__price">${{ product.base_price }}</p>
-                {% endif %}
-                {% endwith %}
+                <div class="card__footer">
+                    {% with offer=product|active_offer %}
+                    {% if offer %}
+                    <p class="card__price">
+                        <span class="price--original">${{ product.base_price }}</span>
+                        <span class="price--discounted">${{ product|discounted_price }}</span>
+                    </p>
+                    {% else %}
+                    <p class="card__price">${{ product.base_price }}</p>
+                    {% endif %}
+                    {% endwith %}
+                </div>
             </div>
-        </div>
+        </article>
         {% endfor %}
     </div>
 </section>
@@ -66,23 +84,29 @@
     <h2 class="section__title">Ofertas activas</h2>
     <div class="grid">
         {% for item in offer_products %}
-        <div class="card card--offer">
-            {% if item.product.images.all %}
-            <img src="{{ item.product.images.all.0.image.url }}" alt="{{ item.product.images.all.0.alt_text|default:item.product.name }}" class="card__image" loading="lazy">
-            {% endif %}
-            <div class="card__body">
-                <a href="{% url 'products:product_detail' item.product.slug %}">
-                    <h3 class="card__title">{{ item.product.name }}</h3>
-                </a>
-                <p class="card__price">
-                    <span class="price--original">${{ item.product.base_price }}</span>
-                    <span class="price--discounted">${{ item.discounted_price }}</span>
-                </p>
+        <article class="card card--offer">
+            <div class="card__image-wrap">
+                {% if item.product.images.all %}
+                <img src="{{ item.product.images.all.0.image.url }}" alt="{{ item.product.images.all.0.alt_text|default:item.product.name }}" class="card__image" loading="lazy">
+                {% else %}
+                <div class="card__image" style="background: var(--color-neutral-200);"></div>
+                {% endif %}
                 <span class="offer-badge">
                     {% if item.offer.discount_type == 'percentage' %}-{{ item.offer.discount_value|floatformat:0 }}%{% else %}-${{ item.offer.discount_value }}{% endif %}
                 </span>
             </div>
-        </div>
+            <div class="card__body">
+                <a href="{% url 'products:product_detail' item.product.slug %}">
+                    <h3 class="card__title">{{ item.product.name }}</h3>
+                </a>
+                <div class="card__footer">
+                    <p class="card__price">
+                        <span class="price--original">${{ item.product.base_price }}</span>
+                        <span class="price--discounted">${{ item.discounted_price }}</span>
+                    </p>
+                </div>
+            </div>
+        </article>
         {% endfor %}
     </div>
 </section>

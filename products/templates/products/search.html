@@ -4,49 +4,82 @@
 {% block title %}Resultados para "{{ query }}" | Catalogo{% endblock %}
 
 {% block content %}
-<h1>Resultados para "{{ query }}"</h1>
+<div class="search-header">
+    <h1>Resultados para <span class="search-header__query">"{{ query }}"</span></h1>
+    {% if is_paginated %}
+    <p class="search-header__count">{{ page_obj.paginator.count }} producto{{ page_obj.paginator.count|pluralize }} encontrado{{ page_obj.paginator.count|pluralize }}</p>
+    {% endif %}
+</div>
 
 {% if products %}
 <div class="grid">
     {% for product in products %}
-    <div class="card">
-        {% if product.images.all %}
-        <img src="{{ product.images.all.0.image.url }}" alt="{{ product.images.all.0.alt_text|default:product.name }}" class="card__image" loading="lazy">
-        {% endif %}
+    <article class="card">
+        <div class="card__image-wrap">
+            {% if product.images.all %}
+            <img src="{{ product.images.all.0.image.url }}" alt="{{ product.images.all.0.alt_text|default:product.name }}" class="card__image" loading="lazy">
+            {% else %}
+            <div class="card__image" style="background: var(--color-neutral-200);"></div>
+            {% endif %}
+            {% with offer=product|active_offer %}
+            {% if offer %}
+            <span class="offer-badge">
+                {% if offer.discount_type == 'percentage' %}-{{ offer.discount_value|floatformat:0 }}%{% else %}-${{ offer.discount_value }}{% endif %}
+            </span>
+            {% endif %}
+            {% endwith %}
+        </div>
         <div class="card__body">
             <a href="{% url 'products:product_detail' product.slug %}">
                 <h3 class="card__title">{{ product.name }}</h3>
             </a>
-            {% with offer=product|active_offer %}
-            {% if offer %}
-            <p class="card__price">
-                <span class="price--original">${{ product.base_price }}</span>
-                <span class="price--discounted">${{ product|discounted_price }}</span>
-            </p>
-            <span class="offer-badge">
-                {% if offer.discount_type == 'percentage' %}-{{ offer.discount_value|floatformat:0 }}%{% else %}-${{ offer.discount_value }}{% endif %}
-            </span>
-            {% else %}
-            <p class="card__price">${{ product.base_price }}</p>
-            {% endif %}
-            {% endwith %}
+            <div class="card__footer">
+                {% with offer=product|active_offer %}
+                {% if offer %}
+                <p class="card__price">
+                    <span class="price--original">${{ product.base_price }}</span>
+                    <span class="price--discounted">${{ product|discounted_price }}</span>
+                </p>
+                {% else %}
+                <p class="card__price">${{ product.base_price }}</p>
+                {% endif %}
+                {% endwith %}
+            </div>
         </div>
-    </div>
+    </article>
     {% endfor %}
 </div>
 
 {% if is_paginated %}
-<div class="pagination">
+<nav class="pagination" aria-label="Paginacion">
     {% if page_obj.has_previous %}
     <a href="?q={{ query|urlencode }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+    {% else %}
+    <span class="disabled">Anterior</span>
     {% endif %}
-    <span class="current">Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+    <span class="current" aria-current="page">Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
     {% if page_obj.has_next %}
     <a href="?q={{ query|urlencode }}&page={{ page_obj.next_page_number }}">Siguiente</a>
+    {% else %}
+    <span class="disabled">Siguiente</span>
     {% endif %}
-</div>
+</nav>
 {% endif %}
 {% else %}
-<p class="empty">No se encontraron productos para "{{ query }}". Intenta con otra busqueda.</p>
+<div class="empty-state">
+    <svg class="empty-state__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.3-4.3"/>
+        <path d="M8 8l3 3"/>
+        <path d="M11 8v3"/>
+        <path d="M8 11h3"/>
+    </svg>
+    <p class="empty-state__title">No se encontraron productos</p>
+    <p class="empty-state__text">
+        No hay resultados para "<strong>{{ query }}</strong>". Intenta con otros terminos o revisa la ortografia.
+    </p>
+</div>
 {% endif %}
 {% endblock %}
