@@ -1,17 +1,51 @@
 {% extends 'products/base.html' %}
 
-{% block content %}
-<h1>{{ product.name }}</h1>
-<p>SKU: {{ product.sku }}</p>
-<p>{{ product.description }}</p>
-<p class="card__price">${{ product.base_price }}</p>
-<p>Stock: {{ product.stock_quantity }}</p>
+{% block title %}{{ product.name }} | Catalogo{% endblock %}
 
-{% if images %}
-<div>
-    {% for image in images %}
-    <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}" style="max-width:200px;">
-    {% endfor %}
+{% block content %}
+<div class="product-detail">
+    <div class="product-detail__gallery">
+        {% if primary_image %}
+        <img src="{{ primary_image.image.url }}" alt="{{ primary_image.alt_text|default:product.name }}" class="product-detail__primary-image">
+        {% endif %}
+        {% if other_images %}
+        <div class="product-detail__thumbnails">
+            {% if primary_image %}
+            <img src="{{ primary_image.image.url }}" alt="{{ primary_image.alt_text|default:product.name }}" class="product-detail__thumbnail product-detail__thumbnail--active">
+            {% endif %}
+            {% for image in other_images %}
+            <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}" class="product-detail__thumbnail">
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="product-detail__info">
+        <h1>{{ product.name }}</h1>
+        <p class="product-detail__sku">SKU: {{ product.sku }}</p>
+
+        {% if active_offer %}
+        <div class="product-detail__price">
+            <span class="price--original">${{ product.base_price }}</span>
+            <span class="price--discounted">${{ discounted_price }}</span>
+        </div>
+        <span class="offer-badge offer-badge--large">
+            {% if active_offer.discount_type == 'percentage' %}-{{ active_offer.discount_value|floatformat:0 }}%{% else %}-${{ active_offer.discount_value }}{% endif %}
+        </span>
+        {% else %}
+        <p class="product-detail__price product-detail__price--single">${{ product.base_price }}</p>
+        {% endif %}
+
+        {% if product.stock_quantity > 0 %}
+        <p class="stock stock--available">En stock ({{ product.stock_quantity }} unidades)</p>
+        {% else %}
+        <p class="stock stock--unavailable">Sin stock</p>
+        {% endif %}
+
+        <div class="product-detail__description">
+            <h2>Descripcion</h2>
+            <p>{{ product.description|linebreaksbr }}</p>
+        </div>
+    </div>
 </div>
-{% endif %}
 {% endblock %}
