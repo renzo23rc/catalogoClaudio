@@ -2,10 +2,18 @@ import pytest
 from django.http import HttpRequest
 from orders.cart import Cart
 
+
+class MockSession(dict):
+    """Minimal mock session that supports the .modified flag."""
+    def __init__(self):
+        super().__init__()
+        self.modified = False
+
+
 @pytest.fixture
 def cart_request():
     request = HttpRequest()
-    request.session = {}
+    request.session = MockSession()
     return request
 
 class TestCart:

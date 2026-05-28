@@ -18,6 +18,13 @@ class TestCartViews:
         assert response.status_code == 302  # redirect
 
     def test_checkout_get(self, client):
+        cat = Category.objects.create(name="Test", slug="test")
+        product = Product.objects.create(
+            name="Test Product", slug="test-p", sku="TST01", base_price=100, category=cat
+        )
+        session = client.session
+        session['cart'] = {str(product.id): 2}
+        session.save()
         response = client.get(reverse('orders:checkout'))
         assert response.status_code == 200
 

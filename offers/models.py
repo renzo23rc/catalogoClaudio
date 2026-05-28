@@ -34,7 +34,7 @@ class Offer(models.Model):
 
     def get_discounted_price(self, product):
         if self.discount_type == 'percentage':
-            return (product.base_price * (1 - self.discount_value / 100)).quantize(Decimal('0.01'))
+            return (product.base_price * (Decimal('1') - self.discount_value / Decimal('100'))).quantize(Decimal('0.01'))
         elif self.discount_type == 'fixed':
             return max(Decimal('0'), product.base_price - self.discount_value).quantize(Decimal('0.01'))
         return product.base_price

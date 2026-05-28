@@ -44,7 +44,8 @@ class Cart:
         return sum(item['total'] for item in self.get_items())
 
     def clear(self):
-        self.session['cart'] = {}
+        self.cart = {}
+        self.session['cart'] = self.cart
         self.save()
 
     def save(self):
