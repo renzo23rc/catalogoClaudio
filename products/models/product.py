@@ -1,7 +1,12 @@
+from decimal import Decimal
+import re
+
 from django.db import models
 from django.utils.text import slugify
 
 from .category import Category
+
+PACK_RE = re.compile(r'\((\d+)\s*U(?:nid)?\.?\)\s*$')
 
 
 class Product(models.Model):
@@ -17,6 +22,7 @@ class Product(models.Model):
         verbose_name='categoria'
     )
     stock_quantity = models.PositiveIntegerField(default=0, verbose_name='stock')
+    pack_size = models.PositiveIntegerField(null=True, blank=True, verbose_name='unidades por pack')
     min_stock_threshold = models.PositiveIntegerField(default=10, verbose_name='stock minimo')
     is_active = models.BooleanField(default=True, verbose_name='activo')
     is_featured = models.BooleanField(default=False, verbose_name='destacado')
@@ -35,3 +41,22 @@ class Product(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+    @property
+    def clean_name(self):
+        """Nombre del producto sin el sufijo de pack (ej: '(12U)')."""
+        return PACK_RE.sub('', self.name).strip()
+
+    @property
+    def unit_price(self):
+        """Precio por unidad individual."""
+        if self.pack_size and self.pack_size > 0:
+            return (self.base_price / Decimal(str(self.pack_size))).quantize(Decimal('0.01'))
+        return self.base_price
+
+    @property
+    def pack_label(self):
+        """Etiqueta del pack, ej: 'Pack x 12'."""
+        if self.pack_size:
+            return f'Pack x {self.pack_size}'
+        return ''

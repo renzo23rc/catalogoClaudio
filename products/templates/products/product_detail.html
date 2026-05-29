@@ -37,8 +37,13 @@
 
     <div class="product-detail__info">
         <div class="product-detail__header">
-            <h1>{{ product.name }}</h1>
+            <h1>{{ product.clean_name }}</h1>
             <span class="product-detail__sku">SKU: {{ product.sku }}</span>
+            {% if product.pack_size %}
+            <span class="product-detail__sku" style="margin-top: var(--space-2); background: var(--color-primary-50); color: var(--color-primary-700);">
+                {{ product.pack_label }} — ${{ product.unit_price }} c/u
+            </span>
+            {% endif %}
         </div>
 
         <div class="product-detail__price-block">
@@ -48,6 +53,11 @@
                     <span class="price--original" style="font-size: var(--text-lg);">${{ product.base_price }}</span>
                     <span class="price--discounted">${{ discounted_price }}</span>
                 </p>
+                {% if product.pack_size %}
+                <p style="font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-1);">
+                    ${{ product.unit_price }} c/u
+                </p>
+                {% endif %}
             </div>
             <span class="offer-badge offer-badge--large">
                 {% if active_offer.discount_type == 'percentage' %}-{{ active_offer.discount_value|floatformat:0 }}% OFF{% else %}-${{ active_offer.discount_value }} OFF{% endif %}

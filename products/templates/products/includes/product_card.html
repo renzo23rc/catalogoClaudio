@@ -16,9 +16,12 @@
     </div>
     <div class="card__body">
         <a href="{% url 'products:product_detail' product.slug %}">
-            <h3 class="card__title">{{ product.name }}</h3>
+            <h3 class="card__title">{{ product.clean_name }}</h3>
         </a>
         <div class="card__meta">
+            {% if product.pack_size %}
+            <span class="card__pack">{{ product.pack_label }}</span>
+            {% endif %}
             <span class="card__stock">
                 {% if product.stock_quantity > 0 %}
                 <span class="stock-dot stock-dot--ok"></span>
@@ -33,13 +36,20 @@
             {% with offer=product|active_offer %}
             {% if offer %}
             <p class="card__price">
+                <span class="price--label">Precio:</span>
                 <span class="price--original">${{ product.base_price }}</span>
                 <span class="price--discounted">${{ product|discounted_price }}</span>
             </p>
             {% else %}
-            <p class="card__price">${{ product.base_price }}</p>
+            <p class="card__price">
+                <span class="price--label">Precio:</span>
+                ${{ product.base_price }}
+            </p>
             {% endif %}
             {% endwith %}
+            {% if product.pack_size %}
+            <p class="card__unit-price">${{ product.unit_price }} c/u</p>
+            {% endif %}
         </div>
     </div>
     {% if product.updated_at %}

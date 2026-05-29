@@ -142,10 +142,15 @@ class Command(BaseCommand):
             price = parse_ars_price(price_match.group(1)) if price_match else 0.0
             stock = int(stock_match.group(1)) if stock_match else 0
 
+            # Extract pack size from name: "(12U)", "(12 U)", "X 6U", "x 12 Unidades"
+            pack_match = re.search(r'(?:\(|x|X)\s*(\d+)\s*U(?:nidads?|nid)?\.?\s*\)?', prod_name)
+            pack_size = int(pack_match.group(1)) if pack_match else None
+
             cards_data.append({
                 'name': prod_name,
                 'price': price,
                 'stock': stock,
+                'pack_size': pack_size,
                 'img_url': img_url,
                 'category': cat_name,
             })
@@ -183,6 +188,7 @@ class Command(BaseCommand):
                         'base_price': prod['price'],
                         'category': category,
                         'stock_quantity': prod['stock'],
+                        'pack_size': prod.get('pack_size'),
                         'is_active': True,
                     }
                 )
