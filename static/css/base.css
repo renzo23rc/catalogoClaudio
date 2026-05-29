@@ -446,7 +446,7 @@ main.container {
 .card__image-wrap {
   position: relative;
   overflow: hidden;
-  background: var(--color-neutral-100);
+  background: var(--color-bg-elevated);
 }
 
 .card__image {

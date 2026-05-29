@@ -33,7 +33,7 @@ def resize_image(image_path):
     img.thumbnail((WIDTH, HEIGHT), Image.LANCZOS)
 
     # Create canvas and paste centered
-    canvas = Image.new('RGB', (WIDTH, HEIGHT), (245, 245, 245))
+    canvas = Image.new('RGB', (WIDTH, HEIGHT), (255, 255, 255))
     x = (WIDTH - img.width) // 2
     y = (HEIGHT - img.height) // 2
     canvas.paste(img, (x, y))

@@ -229,7 +229,7 @@ class Command(BaseCommand):
                 img = img.convert('RGB')
 
             img.thumbnail((400, 300), PILImage.LANCZOS)
-            canvas = PILImage.new('RGB', (400, 300), (245, 245, 245))
+            canvas = PILImage.new('RGB', (400, 300), (255, 255, 255))
             x = (400 - img.width) // 2
             y = (300 - img.height) // 2
             canvas.paste(img, (x, y))
