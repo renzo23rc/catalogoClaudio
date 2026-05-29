@@ -36,7 +36,7 @@
         </a>
     {% endif %}
     <span style="margin-left: auto; font-size: var(--text-sm); color: var(--color-text-muted);">
-        {{ page_obj.paginator.count|default:products|length }} producto{{ page_obj.paginator.count|pluralize }}
+        {{ products|length }} producto{{ products|length|pluralize }}
     </span>
 </div>
 
@@ -53,13 +53,9 @@
     <a href="?page={{ page_obj.previous_page_number }}{% if on_offer %}&on_offer=true{% endif %}">Anterior</a>
     {% else %}
     <span class="disabled">Anterior</span>
-    {% endif %}
+{% endif %}
 
-    <span class="current" aria-current="page">Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-
-    {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}{% if on_offer %}&on_offer=true{% endif %}">Siguiente</a>
-    {% else %}
+{% else %}
     <span class="disabled">Siguiente</span>
     {% endif %}
 </nav>

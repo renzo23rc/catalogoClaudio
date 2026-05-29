@@ -6,8 +6,8 @@
 {% block content %}
 <div class="search-header">
     <h1>Resultados para <span class="search-header__query">"{{ query }}"</span></h1>
-    {% if is_paginated %}
-    <p class="search-header__count">{{ page_obj.paginator.count }} producto{{ page_obj.paginator.count|pluralize }} encontrado{{ page_obj.paginator.count|pluralize }}</p>
+    {% if products %}
+    <p class="search-header__count">{{ products|length }} producto{{ products|length|pluralize }} encontrado{{ products|length|pluralize }}</p>
     {% endif %}
 </div>
 
@@ -24,13 +24,9 @@
     <a href="?q={{ query|urlencode }}&page={{ page_obj.previous_page_number }}">Anterior</a>
     {% else %}
     <span class="disabled">Anterior</span>
-    {% endif %}
+{% endif %}
 
-    <span class="current" aria-current="page">Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-
-    {% if page_obj.has_next %}
-    <a href="?q={{ query|urlencode }}&page={{ page_obj.next_page_number }}">Siguiente</a>
-    {% else %}
+{% else %}
     <span class="disabled">Siguiente</span>
     {% endif %}
 </nav>

@@ -63,7 +63,6 @@ class CategoryListView(ListView):
     model = Product
     template_name = 'products/category_list.html'
     context_object_name = 'products'
-    paginate_by = 12
 
     def get_queryset(self):
         self.category = get_object_or_404(Category, slug=self.kwargs['slug'])
@@ -122,7 +121,6 @@ class SearchView(ListView):
     model = Product
     template_name = 'products/search.html'
     context_object_name = 'products'
-    paginate_by = 12
 
     def get_queryset(self):
         query = self.request.GET.get('q', '')
