@@ -1,0 +1,38 @@
+<div class="dashboard-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+    {% for card in cards %}
+    <a href="{{ card.url }}" style="display: flex; flex-direction: column; padding: 20px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; text-decoration: none; transition: box-shadow 0.15s, transform 0.15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.boxShadow='none'; this.style.transform='none';">
+        <span style="font-size: 13px; color: #64748b; font-weight: 500; margin-bottom: 4px;">{{ card.label }}</span>
+        <span style="font-size: 36px; font-weight: 800; color: {{ card.color }}; line-height: 1;">{{ card.count }}</span>
+    </a>
+    {% endfor %}
+</div>
+
+{% if recent_orders %}
+<div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 20px; margin-bottom: 24px;">
+    <h3 style="margin: 0 0 12px; font-size: 15px; font-weight: 700; color: #1e293b;">Ultimos pedidos pendientes</h3>
+    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+        <thead>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <th style="text-align: left; padding: 8px 4px; color: #64748b; font-weight: 600;">#</th>
+                <th style="text-align: left; padding: 8px 4px; color: #64748b; font-weight: 600;">Cliente</th>
+                <th style="text-align: left; padding: 8px 4px; color: #64748b; font-weight: 600;">Items</th>
+                <th style="text-align: left; padding: 8px 4px; color: #64748b; font-weight: 600;">Total</th>
+                <th style="text-align: left; padding: 8px 4px; color: #64748b; font-weight: 600;">Fecha</th>
+                <th style="text-align: left; padding: 8px 4px; color: #64748b; font-weight: 600;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in recent_orders %}
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 10px 4px; font-weight: 600;">{{ order.id }}</td>
+                <td style="padding: 10px 4px;">{{ order.client_name }}</td>
+                <td style="padding: 10px 4px;">{{ order.items.count }}</td>
+                <td style="padding: 10px 4px; font-weight: 600;">${{ order.total_amount|floatformat:0 }}</td>
+                <td style="padding: 10px 4px; color: #94a3b8;">{{ order.created_at|date:"d/m H:i" }}</td>
+                <td style="padding: 10px 4px;"><a href="/admin/orders/order/{{ order.id }}/change/" style="color: #059669; text-decoration: none; font-weight: 600;">Ver</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}

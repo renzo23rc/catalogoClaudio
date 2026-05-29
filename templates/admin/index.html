@@ -1,0 +1,9 @@
+{% extends "admin/index.html" %}
+{% load admin_dashboard %}
+
+{% block content %}
+<div style="max-width: 960px; margin: 0 auto;">
+    {% admin_dashboard %}
+</div>
+{{ block.super }}
+{% endblock %}
