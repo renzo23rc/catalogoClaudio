@@ -1,0 +1,105 @@
+{% extends 'products/base.html' %}
+{% block title %}Seguir pedido | Catalogo{% endblock %}
+{% block content %}
+
+<nav class="breadcrumb" aria-label="Migas de pan">
+    <a href="{% url 'products:home' %}">Inicio</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <span class="breadcrumb__current">Seguir pedido</span>
+</nav>
+
+<h1 class="section__title" style="--section-title-after: none;">Seguir tu pedido</h1>
+
+{% if error %}
+<div style="padding: var(--space-4); background: #fee2e2; border: 1px solid #fecaca; border-radius: var(--radius-lg); color: #dc2626; margin-bottom: var(--space-6);">
+    {{ error }}
+</div>
+{% endif %}
+
+{% if order %}
+<div style="background: white; border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-6); margin-bottom: var(--space-6);">
+    <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: var(--space-4); margin-bottom: var(--space-6);">
+        <div>
+            <h2 style="font-size: var(--text-2xl); font-weight: var(--font-extrabold); color: var(--color-neutral-900); margin: 0;">Pedido #{{ order.id }}</h2>
+            <p style="color: var(--color-text-muted); margin-top: var(--space-1);">{{ order.created_at|date:"d/m/Y H:i" }}</p>
+        </div>
+        <div>
+            {% if order.status == 'pending' %}
+            <span class="badge" style="background: #fef3c7; color: #d97706;">Pendiente</span>
+            {% elif order.status == 'confirmed' %}
+            <span class="badge" style="background: #dbeafe; color: #2563eb;">Confirmado</span>
+            {% elif order.status == 'completed' %}
+            <span class="badge" style="background: #dcfce7; color: #16a34a;">Completado</span>
+            {% elif order.status == 'cancelled' %}
+            <span class="badge" style="background: #fee2e2; color: #dc2626;">Cancelado</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: var(--text-sm);">
+        <thead>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+                <th style="text-align: left; padding: var(--space-2) var(--space-1); color: var(--color-text-muted); font-weight: var(--font-semibold);">Producto</th>
+                <th style="text-align: center; padding: var(--space-2) var(--space-1); color: var(--color-text-muted); font-weight: var(--font-semibold);">Cant</th>
+                <th style="text-align: right; padding: var(--space-2) var(--space-1); color: var(--color-text-muted); font-weight: var(--font-semibold);">Precio</th>
+                <th style="text-align: right; padding: var(--space-2) var(--space-1); color: var(--color-text-muted); font-weight: var(--font-semibold);">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in items_with_totals %}
+            <tr style="border-bottom: 1px solid var(--color-border-subtle);">
+                <td style="padding: var(--space-3) var(--space-1);">{{ entry.item.product.name }}</td>
+                <td style="padding: var(--space-3) var(--space-1); text-align: center;">{{ entry.item.quantity }}</td>
+                <td style="padding: var(--space-3) var(--space-1); text-align: right;">${{ entry.item.unit_price }}</td>
+                <td style="padding: var(--space-3) var(--space-1); text-align: right; font-weight: var(--font-semibold);">${{ entry.subtotal }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" style="padding: var(--space-3) var(--space-1); text-align: right; font-weight: var(--font-bold);">Total</td>
+                <td style="padding: var(--space-3) var(--space-1); text-align: right; font-weight: var(--font-extrabold); color: var(--color-primary-700);">${{ total|floatformat:0 }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div style="margin-top: var(--space-6); padding: var(--space-4); background: var(--color-neutral-50); border-radius: var(--radius-lg);">
+        <p style="font-size: var(--text-sm); color: var(--color-text-muted);">
+            <strong>Datos de contacto:</strong> {{ order.client_name }} — {{ order.client_phone }} — {{ order.client_email }}
+        </p>
+        {% if order.notes %}
+        <p style="font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-2);">
+            <strong>Notas:</strong> {{ order.notes }}
+        </p>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: var(--space-6); display: flex; gap: var(--space-4); flex-wrap: wrap;">
+        <a href="https://wa.me/{{ WHATSAPP_NUMBER }}?text=Hola%21+Consulta+sobre+pedido+%23{{ order.id }}" target="_blank" class="hero__cta" style="background: #25D366; color: white; text-decoration: none;">
+            Consultar por WhatsApp
+        </a>
+        <a href="{% url 'products:home' %}" style="padding: var(--space-3) var(--space-6); border: 1px solid var(--color-border); border-radius: var(--radius-full); color: var(--color-text); text-decoration: none; display: inline-flex; align-items: center;">
+            Volver al inicio
+        </a>
+    </div>
+</div>
+{% endif %}
+
+{% if not order %}
+<form method="post" style="max-width: 440px;">
+    {% csrf_token %}
+    <div style="margin-bottom: var(--space-4);">
+        <label style="display: block; font-weight: var(--font-semibold); margin-bottom: var(--space-2); font-size: var(--text-sm);">Numero de pedido</label>
+        <input type="number" name="order_id" required
+               style="width: 100%; padding: var(--space-3); border: 1.5px solid var(--color-border); border-radius: var(--radius-lg); font-size: var(--text-base);">
+    </div>
+    <div style="margin-bottom: var(--space-4);">
+        <label style="display: block; font-weight: var(--font-semibold); margin-bottom: var(--space-2); font-size: var(--text-sm);">Telefono (con el que hiciste el pedido)</label>
+        <input type="text" name="phone" required placeholder="Ej: 1155555555"
+               style="width: 100%; padding: var(--space-3); border: 1.5px solid var(--color-border); border-radius: var(--radius-lg); font-size: var(--text-base);">
+    </div>
+    <button type="submit" class="hero__cta" style="border: none; cursor: pointer;">Buscar pedido</button>
+</form>
+{% endif %}
+
+{% endblock %}

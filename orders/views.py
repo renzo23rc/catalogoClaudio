@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from products.models import Product
@@ -89,4 +90,39 @@ def checkout(request):
 
 def order_confirmation(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    return render(request, 'orders/confirmation.html', {'order': order})
+    total = sum(item.unit_price * item.quantity for item in order.items.all())
+    return render(request, 'orders/confirmation.html', {'order': order, 'total': total})
+
+
+def track_order(request):
+    """Public order lookup by ID + phone."""
+    order = None
+    error = ''
+    items_with_totals = []
+    total = 0
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        if order_id and phone:
+            try:
+                order = Order.objects.get(
+                    Q(id=int(order_id)) & Q(client_phone__contains=phone)
+                )
+                for item in order.items.all():
+                    subtotal = item.unit_price * item.quantity
+                    items_with_totals.append({
+                        'item': item,
+                        'subtotal': subtotal,
+                    })
+                    total += subtotal
+            except (Order.DoesNotExist, ValueError):
+                error = 'No encontramos un pedido con esos datos. Verificá el numero y el telefono.'
+        else:
+            error = 'Completá numero de pedido y telefono.'
+
+    return render(request, 'orders/track.html', {
+        'order': order,
+        'error': error,
+        'items_with_totals': items_with_totals,
+        'total': total,
+    })
