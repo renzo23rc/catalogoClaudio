@@ -110,8 +110,11 @@ class Command(BaseCommand):
             if not prod_name:
                 continue
 
-            # Parse fields
-            price = round(float(prices[i].replace(',', '.')), 2) if i < len(prices) else 0.0
+            # Parse fields - ARS format: $2.412 = dos mil pesos (punto = miles, sin coma decimal)
+            raw_price = prices[i] if i < len(prices) else '0'
+            raw_price = raw_price.replace('.', '')  # sacar separador de miles
+            raw_price = raw_price.replace(',', '.')  # si hay coma, es decimal
+            price = round(float(raw_price), 2)
             stock = int(stocks[i]) if i < len(stocks) else 0
 
             # Match image by index (now deduplicated, 1:1 with products)
