@@ -202,6 +202,8 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(
                 f'\n✅ {len(cat_headers)} categorías, {stats["prods"]} productos nuevos'
             ))
+            # Create featured products and default offers
+            self._create_featured_and_offers()
 
         if download_images:
             total = Product.objects.filter(images__is_primary=True).count()
@@ -209,6 +211,33 @@ class Command(BaseCommand):
                 f'📸 {stats["imgs"]} descargadas esta ronda | '
                 f'{total}/{Product.objects.count()} productos con imagen'
             ))
+
+    def _create_featured_and_offers(self):
+        """Marca destacados y crea ofertas por defecto."""
+        from django.utils import timezone
+        from datetime import timedelta
+        from offers.models import Offer
+
+        now = timezone.now()
+        for name in ['COCA', 'SPRITE', 'FANTA', 'STELLA', 'QUILMES', 'PRINGLES', 'LAYS']:
+            Product.objects.filter(name__icontains=name).update(is_featured=True)
+
+        offers_data = [
+            ('15% en gaseosas', 'gaseosas-jugos-aguas', 'percentage', 15),
+            ('$200 off en snacks', 'snacks', 'fixed', 200),
+        ]
+        for oname, cslug, dtype, dval in offers_data:
+            prods = Product.objects.filter(category__slug=cslug)[:8]
+            if prods.exists():
+                o, _ = Offer.objects.get_or_create(name=oname, defaults={
+                    'discount_type': dtype, 'discount_value': dval,
+                    'start_date': now, 'end_date': now + timedelta(days=15), 'is_active': True,
+                })
+                o.products.set(list(prods))
+
+        featured = Product.objects.filter(is_featured=True).count()
+        offers = Offer.objects.count()
+        self.stdout.write(f'  ⭐ {featured} destacados, 🏷️ {offers} ofertas')
 
     def _download_image(self, product, img_url, stats):
         try:
