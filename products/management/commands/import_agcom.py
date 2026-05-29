@@ -212,13 +212,36 @@ class Command(BaseCommand):
 
     def _download_image(self, product, img_url, stats):
         try:
+            from PIL import Image as PILImage
+            import io as _io
+
             ctx = ssl._create_unverified_context()
             data = urllib.request.urlopen(img_url, context=ctx, timeout=5).read()
-            ext = os.path.splitext(img_url.split('/')[-1])[1] or '.png'
-            fname = f"{slugify(product.name)[:40]}{ext}"
+
+            # Normalize to 400x300
+            img = PILImage.open(_io.BytesIO(data))
+            if img.mode in ('RGBA', 'P'):
+                img = img.convert('RGBA')
+                bg = PILImage.new('RGBA', img.size, (245, 245, 245, 255))
+                bg.paste(img, mask=img.split()[3] if img.mode == 'RGBA' else None)
+                img = bg.convert('RGB')
+            elif img.mode != 'RGB':
+                img = img.convert('RGB')
+
+            img.thumbnail((400, 300), PILImage.LANCZOS)
+            canvas = PILImage.new('RGB', (400, 300), (245, 245, 245))
+            x = (400 - img.width) // 2
+            y = (300 - img.height) // 2
+            canvas.paste(img, (x, y))
+
+            buf = _io.BytesIO()
+            canvas.save(buf, format='JPEG', quality=85)
+            buf.seek(0)
+
+            fname = f"{slugify(product.name)[:40]}.jpg"
             ProductImage.objects.create(
                 product=product,
-                image=ContentFile(data, name=fname),
+                image=ContentFile(buf.read(), name=fname),
                 is_primary=True,
                 alt_text=product.name,
                 order=0,

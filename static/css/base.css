@@ -447,24 +447,12 @@ main.container {
   position: relative;
   overflow: hidden;
   background: var(--color-neutral-100);
-  aspect-ratio: 4 / 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-3);
 }
 
 .card__image {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
+  display: block;
+  width: 100%;
   height: auto;
-  object-fit: contain;
-  transition: opacity var(--transition-base);
-}
-
-.card:hover .card__image {
-  opacity: 0.85;
 }
 
 .card__body {
@@ -937,19 +925,12 @@ main.container {
   border-radius: var(--radius-xl);
   overflow: hidden;
   border: 1px solid var(--color-border);
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-4);
 }
 
 .product-detail__primary-image {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
+  display: block;
+  width: 100%;
   height: auto;
-  object-fit: contain;
 }
 
 .product-detail__thumbnails {
