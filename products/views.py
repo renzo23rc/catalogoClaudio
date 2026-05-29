@@ -124,14 +124,44 @@ class SearchView(ListView):
 
     def get_queryset(self):
         query = self.request.GET.get('q', '')
+        min_price = self.request.GET.get('min_price', '')
+        max_price = self.request.GET.get('max_price', '')
+        in_stock = self.request.GET.get('in_stock', '')
+        cat_slug = self.request.GET.get('category', '')
+
         qs = Product.objects.filter(is_active=True).prefetch_related('images', 'offers')
+
         if query:
             qs = qs.filter(
                 Q(name__icontains=query) | Q(description__icontains=query)
             )
+
+        if min_price:
+            try:
+                qs = qs.filter(base_price__gte=float(min_price))
+            except ValueError:
+                pass
+
+        if max_price:
+            try:
+                qs = qs.filter(base_price__lte=float(max_price))
+            except ValueError:
+                pass
+
+        if in_stock:
+            qs = qs.filter(stock_quantity__gt=0)
+
+        if cat_slug:
+            qs = qs.filter(category__slug=cat_slug)
+
         return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['query'] = self.request.GET.get('q', '')
+        context['min_price'] = self.request.GET.get('min_price', '')
+        context['max_price'] = self.request.GET.get('max_price', '')
+        context['in_stock_val'] = self.request.GET.get('in_stock', '')
+        context['selected_cat'] = self.request.GET.get('category', '')
+        context['categories'] = Category.objects.filter(is_active=True)
         return context

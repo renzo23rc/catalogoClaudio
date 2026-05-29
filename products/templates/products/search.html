@@ -1,25 +1,55 @@
 {% extends 'products/base.html' %}
 {% load product_tags %}
 
-{% block title %}Resultados para "{{ query }}" | Catalogo{% endblock %}
+{% block title %}Buscar{% if query %} "{{ query }}"{% endif %} | Catalogo{% endblock %}
 
 {% block content %}
 <div class="search-header">
-    <h1>Resultados para <span class="search-header__query">"{{ query }}"</span></h1>
+    <h1>{% if query %}Resultados para <span class="search-header__query">"{{ query }}"</span>{% else %}Buscar productos{% endif %}</h1>
     {% if products %}
     <p class="search-header__count">{{ products|length }} producto{{ products|length|pluralize }} encontrado{{ products|length|pluralize }}</p>
     {% endif %}
 </div>
 
+<form class="filter-bar" action="{% url 'products:search' %}" method="get" style="flex-wrap: wrap; gap: var(--space-3);">
+    <input type="text" name="q" value="{{ query }}" placeholder="Buscar productos..." 
+           style="flex: 1; min-width: 180px; padding: var(--space-2) var(--space-3); border: 1.5px solid var(--color-border); border-radius: var(--radius-lg); font-size: var(--text-sm);">
+
+    <select name="category" style="padding: var(--space-2) var(--space-3); border: 1.5px solid var(--color-border); border-radius: var(--radius-lg); font-size: var(--text-sm); background: white;">
+        <option value="">Todas las categorias</option>
+        {% for cat in categories %}
+        <option value="{{ cat.slug }}" {% if selected_cat == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+    </select>
+
+    <input type="number" name="min_price" value="{{ min_price }}" placeholder="$ min" 
+           style="width: 90px; padding: var(--space-2) var(--space-3); border: 1.5px solid var(--color-border); border-radius: var(--radius-lg); font-size: var(--text-sm);">
+
+    <input type="number" name="max_price" value="{{ max_price }}" placeholder="$ max"
+           style="width: 90px; padding: var(--space-2) var(--space-3); border: 1.5px solid var(--color-border); border-radius: var(--radius-lg); font-size: var(--text-sm);">
+
+    <label style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); white-space: nowrap; cursor: pointer;">
+        <input type="checkbox" name="in_stock" value="1" {% if in_stock_val %}checked{% endif %} style="width: 16px; height: 16px;">
+        Solo con stock
+    </label>
+
+    <button type="submit" style="padding: var(--space-2) var(--space-4); background: var(--color-primary-700); color: white; border: none; border-radius: var(--radius-lg); cursor: pointer; font-weight: var(--font-semibold); font-size: var(--text-sm);">
+        Filtrar
+    </button>
+
+    {% if query or min_price or max_price or in_stock_val or selected_cat %}
+    <a href="{% url 'products:search' %}" style="font-size: var(--text-sm); color: var(--color-text-muted); text-decoration: none;">Limpiar filtros</a>
+    {% endif %}
+</form>
+
 {% if products %}
-<div class="grid">
+<div class="grid" style="margin-top: var(--space-6);">
     {% for product in products %}
     {% include 'products/includes/product_card.html' %}
     {% endfor %}
 </div>
-
 {% else %}
-<div class="empty-state">
+<div class="empty-state" style="margin-top: var(--space-6);">
     <svg class="empty-state__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <circle cx="11" cy="11" r="8"/>
         <path d="m21 21-4.3-4.3"/>
@@ -27,10 +57,13 @@
         <path d="M11 8v3"/>
         <path d="M8 11h3"/>
     </svg>
-    <p class="empty-state__title">No se encontraron productos</p>
-    <p class="empty-state__text">
-        No hay resultados para "<strong>{{ query }}</strong>". Intenta con otros terminos o revisa la ortografia.
-    </p>
+    {% if query or min_price or max_price or in_stock_val or selected_cat %}
+    <p class="empty-state__title">No se encontraron productos con esos filtros</p>
+    <p class="empty-state__text">Probá con otros terminos o <a href="{% url 'products:search' %}">limpiá los filtros</a>.</p>
+    {% else %}
+    <p class="empty-state__title">Buscar productos</p>
+    <p class="empty-state__text">Usá el buscador para encontrar productos por nombre, palabra clave o aplica los filtros de categoria y precio.</p>
+    {% endif %}
 </div>
 {% endif %}
 {% endblock %}
