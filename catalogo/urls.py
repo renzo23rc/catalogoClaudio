@@ -4,8 +4,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
+from products.admin import stock_quick_view
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('admin/stock/', admin.site.admin_view(stock_quick_view), name='stock_quick'),
     path('i18n/', include('django.conf.urls.i18n')),
     path('', include('products.urls')),
     path('', include('orders.urls')),

@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.contrib import admin, messages
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from django.urls import path
+from django.urls import path, reverse
 from django.utils.html import format_html
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -159,3 +159,28 @@ class ProductImageAdmin(admin.ModelAdmin):
     list_display = ['product', 'is_primary', 'order']
     list_filter = ['is_primary']
     search_fields = ['product__name', 'alt_text']
+
+
+# ─── Stock Quick View ────────────────────────
+
+def stock_quick_view(request):
+    """Vista rapida para editar stock de multiples productos."""
+    if request.method == 'POST':
+        updated = 0
+        for key, value in request.POST.items():
+            if key.startswith('stock_'):
+                try:
+                    product_id = int(key.replace('stock_', ''))
+                    new_stock = int(value)
+                    Product.objects.filter(id=product_id).update(stock_quantity=new_stock)
+                    updated += 1
+                except (ValueError, TypeError):
+                    pass
+        messages.success(request, f'{updated} producto(s) actualizados.')
+        return redirect('stock_quick')
+
+    products = Product.objects.filter(is_active=True).order_by('category__name', 'name')
+    return render(request, 'admin/stock_quick.html', {
+        'products': products,
+        'title': 'Stock rapido',
+    })
