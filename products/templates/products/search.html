@@ -18,19 +18,6 @@
     {% endfor %}
 </div>
 
-{% if is_paginated %}
-<nav class="pagination" aria-label="Paginacion">
-    {% if page_obj.has_previous %}
-    <a href="?q={{ query|urlencode }}&page={{ page_obj.previous_page_number }}">Anterior</a>
-    {% else %}
-    <span class="disabled">Anterior</span>
-{% endif %}
-
-{% else %}
-    <span class="disabled">Siguiente</span>
-    {% endif %}
-</nav>
-{% endif %}
 {% else %}
 <div class="empty-state">
     <svg class="empty-state__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
